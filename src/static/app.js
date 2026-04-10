@@ -553,7 +553,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </ul>
       </div>
       <div class="activity-card-actions">
-        <button class="share-button" data-activity="${name}" title="Share this activity">
+        <button class="share-button" data-activity="${name}" title="Share this activity" aria-label="Share ${name}">
           📤 Share
         </button>
         ${
