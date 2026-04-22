@@ -865,6 +865,7 @@ document.addEventListener("DOMContentLoaded", () => {
     textArea.style.left = "-9999px";
     document.body.appendChild(textArea);
     textArea.select();
+    // Legacy fallback for older browsers that don't support navigator.clipboard.
     const copied = document.execCommand("copy");
     document.body.removeChild(textArea);
 
@@ -887,7 +888,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const shareUrl = getActivityShareUrl(activityName);
     const shareText = getActivityShareText(activityName, details);
-    const shareContent = `${shareText} ${shareUrl}`;
+    const shareContent = `${shareText}\n${shareUrl}`;
 
     try {
       if (platform === "native" && navigator.share) {
