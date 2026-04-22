@@ -63,6 +63,10 @@ document.addEventListener("DOMContentLoaded", () => {
         ? "dark"
         : "light");
 
+    if (!savedTheme) {
+      localStorage.setItem("theme", preferredTheme);
+    }
+
     applyTheme(preferredTheme);
   }
 
@@ -261,7 +265,8 @@ document.addEventListener("DOMContentLoaded", () => {
   logoutButton.addEventListener("click", logout);
   closeLoginModal.addEventListener("click", closeLoginModalHandler);
   themeToggle.addEventListener("click", () => {
-    const currentTheme = document.documentElement.getAttribute("data-theme");
+    const currentTheme =
+      document.documentElement.getAttribute("data-theme") || "light";
     const nextTheme = currentTheme === "dark" ? "light" : "dark";
     localStorage.setItem("theme", nextTheme);
     applyTheme(nextTheme);
