@@ -573,19 +573,19 @@ document.addEventListener("DOMContentLoaded", () => {
         <span class="share-label">Share:</span>
         <div class="share-buttons">
           <button class="share-button" data-platform="native" data-activity="${name}" aria-label="Share ${name} activity">
-            📣
+            <span aria-hidden="true">📣</span>
           </button>
           <button class="share-button" data-platform="facebook" data-activity="${name}" aria-label="Share ${name} on Facebook">
-            f
+            <span aria-hidden="true">f</span>
           </button>
           <button class="share-button" data-platform="x" data-activity="${name}" aria-label="Share ${name} on X">
-            X
+            <span aria-hidden="true">X</span>
           </button>
           <button class="share-button" data-platform="whatsapp" data-activity="${name}" aria-label="Share ${name} on WhatsApp">
-            💬
+            <span aria-hidden="true">💬</span>
           </button>
           <button class="share-button" data-platform="copy" data-activity="${name}" aria-label="Copy ${name} share link">
-            🔗
+            <span aria-hidden="true">🔗</span>
           </button>
         </div>
       </div>
@@ -907,7 +907,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (platform === "facebook") {
         targetUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
       } else if (platform === "x") {
-        targetUrl = `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
+        targetUrl = `https://x.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
       } else if (platform === "whatsapp") {
         targetUrl = `https://wa.me/?text=${encodeURIComponent(shareContent)}`;
       } else {
@@ -915,7 +915,11 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      const popup = window.open(targetUrl, "_blank", "noopener,noreferrer");
+      const popup = window.open(
+        targetUrl,
+        "_blank",
+        "width=600,height=500,noopener,noreferrer"
+      );
       if (!popup) {
         showMessage("Please allow popups to share this activity.", "warning");
       }
