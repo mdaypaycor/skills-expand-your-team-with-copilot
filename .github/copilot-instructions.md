@@ -14,7 +14,7 @@ Consider the following when communicating with the staff.
 - The staff is not technical. Explain in simple terms as much as possible and avoid software jargon.
 - Any new code must be easy to maintain and understand, without significant coding experience.
 
-## Program architecture
+## Program Architecture
 
 - The website users are the students and teachers. Make sure the user experience is simple.
 - Do not make additional apps or services.
