@@ -569,6 +569,26 @@ document.addEventListener("DOMContentLoaded", () => {
         `
         }
       </div>
+      <div class="share-actions">
+        <span class="share-label">Share:</span>
+        <div class="share-buttons">
+          <button class="share-button" data-platform="native" data-activity="${name}" aria-label="Share ${name} activity">
+            📣
+          </button>
+          <button class="share-button" data-platform="facebook" data-activity="${name}" aria-label="Share ${name} on Facebook">
+            f
+          </button>
+          <button class="share-button" data-platform="x" data-activity="${name}" aria-label="Share ${name} on X">
+            X
+          </button>
+          <button class="share-button" data-platform="whatsapp" data-activity="${name}" aria-label="Share ${name} on WhatsApp">
+            💬
+          </button>
+          <button class="share-button" data-platform="copy" data-activity="${name}" aria-label="Copy ${name} share link">
+            🔗
+          </button>
+        </div>
+      </div>
     `;
 
     // Add click handlers for delete buttons
@@ -586,6 +606,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    const shareButtons = activityCard.querySelectorAll(".share-button");
+    shareButtons.forEach((button) => {
+      button.addEventListener("click", handleShare);
+    });
 
     activitiesList.appendChild(activityCard);
   }
@@ -809,6 +834,98 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
       messageDiv.classList.add("hidden");
     }, 5000);
+  }
+
+  // Build share URL for a specific activity
+  function getActivityShareUrl(activityName) {
+    const shareUrl = new URL(window.location.href);
+    shareUrl.searchParams.set("activity", activityName);
+    return shareUrl.toString();
+  }
+
+  // Build share text for a specific activity
+  function getActivityShareText(activityName, details) {
+    return `${activityName} at Mergington High School: ${details.description} (${formatSchedule(
+      details
+    )})`;
+  }
+
+  // Copy text to clipboard with fallback for older browsers
+  async function copyToClipboard(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.setAttribute("readonly", "");
+    textArea.style.position = "absolute";
+    textArea.style.left = "-9999px";
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textArea);
+  }
+
+  // Handle social sharing actions
+  async function handleShare(event) {
+    const button = event.currentTarget;
+    const platform = button.dataset.platform;
+    const activityName = button.dataset.activity;
+    const details = allActivities[activityName];
+
+    if (!details) {
+      showMessage("Unable to share this activity right now.", "error");
+      return;
+    }
+
+    const shareUrl = getActivityShareUrl(activityName);
+    const shareText = getActivityShareText(activityName, details);
+    const shareContent = `${shareText} ${shareUrl}`;
+
+    try {
+      if (platform === "native" && navigator.share) {
+        await navigator.share({
+          title: activityName,
+          text: shareText,
+          url: shareUrl,
+        });
+        return;
+      }
+
+      if (platform === "copy" || (platform === "native" && !navigator.share)) {
+        await copyToClipboard(shareContent);
+        showMessage("Activity link copied. Share it with your friends!", "success");
+        return;
+      }
+
+      const encodedUrl = encodeURIComponent(shareUrl);
+      const encodedText = encodeURIComponent(shareText);
+      let targetUrl = "";
+
+      if (platform === "facebook") {
+        targetUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+      } else if (platform === "x") {
+        targetUrl = `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
+      } else if (platform === "whatsapp") {
+        targetUrl = `https://wa.me/?text=${encodeURIComponent(shareContent)}`;
+      } else {
+        showMessage("Unsupported share option.", "error");
+        return;
+      }
+
+      const popup = window.open(targetUrl, "_blank", "noopener,noreferrer");
+      if (!popup) {
+        showMessage("Please allow popups to share this activity.", "warning");
+      }
+    } catch (error) {
+      if (error && error.name === "AbortError") {
+        return;
+      }
+      showMessage("Sharing failed. Please try again.", "error");
+      console.error("Error sharing activity:", error);
+    }
   }
 
   // Handle form submission
