@@ -311,11 +311,12 @@ document.addEventListener("DOMContentLoaded", () => {
       return "";
     }
 
-    const normalizedDifficulty = details.difficulty.toLowerCase();
-    return (
-      normalizedDifficulty.charAt(0).toUpperCase() +
-      normalizedDifficulty.slice(1)
-    );
+    return details.difficulty
+      .toLowerCase()
+      .split(" ")
+      .filter(Boolean)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   }
 
   // Function to determine activity type (this would ideally come from backend)
