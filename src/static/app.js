@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
     community: { label: "Community", color: "#fff3e0", textColor: "#e65100" },
     technology: { label: "Technology", color: "#e8eaf6", textColor: "#3949ab" },
   };
+  const SCHOOL_NAME = "Mergington High School";
 
   // State for activities and filters
   let allActivities = {};
@@ -845,7 +846,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Build share text for a specific activity
   function getActivityShareText(activityName, details) {
-    return `${activityName} at Mergington High School: ${details.description} (${formatSchedule(
+    return `${activityName} at ${SCHOOL_NAME}: ${details.description} (${formatSchedule(
       details
     )})`;
   }
@@ -864,8 +865,12 @@ document.addEventListener("DOMContentLoaded", () => {
     textArea.style.left = "-9999px";
     document.body.appendChild(textArea);
     textArea.select();
-    document.execCommand("copy");
+    const copied = document.execCommand("copy");
     document.body.removeChild(textArea);
+
+    if (!copied) {
+      throw new Error("Clipboard copy command was not successful.");
+    }
   }
 
   // Handle social sharing actions
@@ -915,11 +920,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      const popup = window.open(
-        targetUrl,
-        "_blank",
-        "width=600,height=500,noopener,noreferrer"
-      );
+      const popup = window.open(targetUrl, "_blank", "noopener,noreferrer");
       if (!popup) {
         showMessage("Please allow popups to share this activity.", "warning");
       }
